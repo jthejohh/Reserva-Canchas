@@ -1,0 +1,107 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model canchas {
+  id_cancha         Int               @id @default(autoincrement())
+  id_categoria      Int
+  nombre            String            @db.VarChar(150)
+  descripcion       String?           @db.Text
+  tarifa_por_hora   Decimal           @db.Decimal(10, 2)
+  estado            canchas_estado    @default(Disponible)
+  categorias_cancha categorias_cancha @relation(fields: [id_categoria], references: [id_categoria], map: "fk_canchas_categorias")
+  reservas          reservas[]
+
+  @@index([id_categoria], map: "fk_canchas_categorias_idx")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model categorias_cancha {
+  id_categoria     Int       @id @default(autoincrement())
+  nombre_categoria String    @unique(map: "idx_nombre_categoria_unico") @db.VarChar(100)
+  descripcion      String?   @db.Text
+  canchas          canchas[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model pagos {
+  id_pago     Int               @id @default(autoincrement())
+  id_reserva  Int               @unique(map: "idx_reserva_unica")
+  fecha_pago  DateTime          @default(now()) @db.DateTime(0)
+  monto       Decimal           @db.Decimal(10, 2)
+  metodo_pago pagos_metodo_pago
+  estado_pago pagos_estado_pago @default(Completado)
+  reservas    reservas          @relation(fields: [id_reserva], references: [id_reserva], map: "fk_pagos_reservas")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model reservas {
+  id_reserva        Int             @id @default(autoincrement())
+  id_usuario        Int
+  id_cancha         Int
+  fecha_hora_inicio DateTime        @db.DateTime(0)
+  fecha_hora_fin    DateTime        @db.DateTime(0)
+  monto_total       Decimal         @db.Decimal(10, 2)
+  estado            reservas_estado @default(Pendiente_de_Pago)
+  pagos             pagos?
+  canchas           canchas         @relation(fields: [id_cancha], references: [id_cancha], map: "fk_reservas_canchas")
+  usuarios          usuarios        @relation(fields: [id_usuario], references: [id_usuario], map: "fk_reservas_usuarios")
+
+  @@index([id_cancha], map: "fk_reservas_canchas_idx")
+  @@index([id_usuario], map: "fk_reservas_usuarios_idx")
+  @@index([fecha_hora_inicio, fecha_hora_fin], map: "idx_fechas_reserva")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model roles {
+  id_rol     Int        @id @default(autoincrement())
+  nombre_rol String     @unique(map: "idx_nombre_rol_unico") @db.VarChar(50)
+  usuarios   usuarios[]
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model usuarios {
+  id_usuario         Int        @id @default(autoincrement())
+  id_rol             Int
+  nombre             String     @db.VarChar(100)
+  apellido           String     @db.VarChar(100)
+  correo_electronico String     @unique(map: "idx_correo_unico") @db.VarChar(255)
+  contrase_a_hash    String     @map("contraseña_hash") @db.VarChar(255)
+  telefono           String?    @db.VarChar(20)
+  fecha_registro     DateTime   @default(now()) @db.DateTime(0)
+  reservas           reservas[]
+  roles              roles      @relation(fields: [id_rol], references: [id_rol], map: "fk_usuarios_roles")
+
+  @@index([id_rol], map: "fk_usuarios_roles_idx")
+}
+
+enum pagos_metodo_pago {
+  Tarjeta_de_Cr_dito @map("Tarjeta de Crédito")
+  PSE
+  Efectivo
+}
+
+enum canchas_estado {
+  Disponible
+  En_Mantenimiento @map("En Mantenimiento")
+  No_Disponible    @map("No Disponible")
+}
+
+enum pagos_estado_pago {
+  Completado
+  Fallido
+  Reembolsado
+}
+
+enum reservas_estado {
+  Pendiente_de_Pago @map("Pendiente de Pago")
+  Confirmada
+  Cancelada
+  Completada
+}

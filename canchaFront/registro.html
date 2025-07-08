@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Usuario - NovaTech Canchas</title>
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Enlace al archivo CSS externo -->
+    <link rel="stylesheet" href="css/style.css">
+
+    <style>
+        /* Estilos adicionales solo para esta página */
+        .form-container {
+            max-width: 500px;
+            margin: 40px auto;
+            padding: 40px;
+            background-color: var(--color-surface);
+            border-radius: 12px;
+            border-top: 5px solid var(--color-primary);
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="container header-content">
+            <h1><a href="index.html" style="text-decoration: none; color: inherit;">NovaTech Canchas</a></h1>
+            <nav id="main-nav">
+                <a href="index.html" class="nav-link">Volver al Inicio</a>
+            </nav>
+        </div>
+    </header>
+
+    <main class="container">
+        <div class="form-container">
+            <h2 style="text-align: center; margin-bottom: 30px;">Crea tu Cuenta</h2>
+            <form id="registro-form">
+                <div class="form-group">
+                    <label for="nombre">Nombre:</label>
+                    <input type="text" id="nombre" name="nombre" required>
+                </div>
+                <div class="form-group">
+                    <label for="apellido">Apellido:</label>
+                    <input type="text" id="apellido" name="apellido" required>
+                </div>
+                <div class="form-group">
+                    <label for="correo_electronico">Correo Electrónico:</label>
+                    <input type="email" id="correo_electronico" name="correo_electronico" required>
+                </div>
+                <div class="form-group">
+                    <label for="contrasena">Contraseña:</label>
+                    <input type="password" id="contrasena" name="contrasena" required minlength="6">
+                </div>
+                <div class="form-group">
+                    <label for="telefono">Teléfono:</label>
+                    <input type="tel" id="telefono" name="telefono" required>
+                </div>
+                <button type="submit">Registrarme</button>
+                <p id="registro-error" class="error-message"></p>
+            </form>
+        </div>
+    </main>
+
+    <footer>
+        <div class="container">
+            <p>&copy; 2025 NovaTech Systems S.A.S .</p>
+        </div>
+    </footer>
+
+    <!-- El script main.js ya contiene la lógica para este formulario -->
+    <script type="module" src="js/main.js"></script>
+</body>
+</html>
